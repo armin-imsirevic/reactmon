@@ -21,22 +21,20 @@ export function updateOffset(offset) {
 function runRequest() {
   return {
     type: SEND_REQUEST,
-    isRequestRunning: true,
   }
 }
 
 function notifiyRequestFailed(error) {
+  console.log(error);
   return {
     type: REQUEST_FAILED,
-    requestFailed: true,
-    error: error
+    error: error,
   }
 }
 
 function notifiyRequestSucceeded() {
   return {
     type: REQUEST_SUCCEEDED,
-    requestFailed: false,
   }
 }
 
@@ -49,28 +47,46 @@ function recieveResponse(response) {
 
 function listPokemons() {
   return {
-    type: LIST_POKEMONS
+    type: LIST_POKEMONS,
   }
 }
 
 function getPokemon() {
   return {
-    type: GET_POKEMON
+    type: GET_POKEMON,
   }
 }
 
-export function fetchPokemons(offset = 0) {
-  console.log(offset)
-  return dispatch => {
+export function fetchPrevPokemons() {
+  return (dispatch, getState) => {
+    const state = getState();
+    const offset = (Math.max(state.pokemonStore.offset - 20, 0));
     dispatch(sendRequest(URL_LIST_POKEMONS + offset))
-    .then(() =>  dispatch(listPokemons()))
+      .then(() => {
+        dispatch(updateOffset(offset));
+        dispatch(listPokemons());
+      }
+    )
+  }
+}
+
+export function fetchNextPokemons() {
+  return (dispatch, getState) => {
+    const state = getState();
+    const offset = state.pokemonStore.offset + 20;
+    dispatch(sendRequest(URL_LIST_POKEMONS + offset))
+      .then(() => {
+        dispatch(updateOffset(offset));
+        dispatch(listPokemons());
+      }
+    )
   }
 }
 
 export function fetchPokemon(pokemonName) {
   return dispatch => {
     dispatch(sendRequest(URL_POKEMON + pokemonName))
-    .then(() =>  dispatch(getPokemon()))
+    .then(() =>  dispatch(getPokemon()));
   }
 }
 
@@ -81,6 +97,6 @@ function sendRequest(URL) {
       .then(response => response.json())
       .then(json =>  dispatch(recieveResponse(Object.values(json))))
       .then(_ =>  dispatch(notifiyRequestSucceeded()))
-      .catch(err => dispatch(notifiyRequestFailed(err.toString)))
+      .catch(err => dispatch(notifiyRequestFailed(err)));
   }
 }

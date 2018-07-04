@@ -5,6 +5,7 @@ import {
   fetchPokemon
 } from '../actions/actions'
 import Pokemon from '../components/Pokemon'
+import Error from '../components/Error'
 
 class ShowPokemon extends Component {
 
@@ -14,11 +15,11 @@ class ShowPokemon extends Component {
   }
 
   render() {
-    console.log(this.props);
-    const { pokemon } = this.props.pokemonStore;
+    const { pokemon, requestFailed, error } = this.props.pokemonStore;
     return (
       <div>
          <Pokemon pokemon={pokemon} />
+         { requestFailed ? (<Error error={error}/>) : null}
       </div>
     )
   }

@@ -7,14 +7,15 @@ import PropTypes from 'prop-types'
 import { BrowserRouter as Router ,Switch, Route } from 'react-router-dom'
 
 
+
 const Root = ({ store }) => (
       <Provider store={store}>
-        <Router>
-          <Switch>
-            <Route exact path="/" component={ShowPokemons} />
-            <Route path="/pokemon/:pokemonName" component={ShowPokemon} />
-          </Switch>
-        </Router>
+          <Router>
+            <Switch>
+              <Route exact path="/" component={ShowPokemons} />
+              <Route path="/pokemon/:pokemonName" component={ShowPokemon} />
+            </Switch>
+          </Router>
       </Provider>
 )
 

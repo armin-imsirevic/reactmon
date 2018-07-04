@@ -2,37 +2,28 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
-  fetchPokemons,
-  updateOffset,
+  fetchNextPokemons,
+  fetchPrevPokemons,
 } from '../actions/actions'
 import ListPokemons from '../components/ListPokemons'
+import Error from '../components/Error'
 
 class ShowPokemons extends Component {
 
   componentDidMount() {
-    const {pokemonStore, getPokemons} = this.props
-    getPokemons(pokemonStore.offset);
+    this.props.getPrevPokemons();
   }
 
   prev = () => {
-    const { offset } = this.props.pokemonStore
-    const newOffset = (offset > 0) ? offset - 20 : 0;
-    this.props.updateOffset(newOffset);
-    this.props.getPokemons(newOffset);
-
+    this.props.getPrevPokemons();
   }
 
   next = () => {
-    const { offset } = this.props.pokemonStore
-    const newOffset = offset + 20;
-    this.props.updateOffset(newOffset);
-    this.props.getPokemons(newOffset);
-
+    this.props.getNextPokemons();
   }
 
   render() {
-    console.log(this.props);
-    const { pokemons } = this.props.pokemonStore;
+    const { pokemons, requestFailed, error } = this.props.pokemonStore;
 
     return (
       <div>
@@ -40,9 +31,11 @@ class ShowPokemons extends Component {
           <button onClick={() => this.prev()}>
             PREVIOUS
           </button>
+
           <button onClick={() => this.next()}>
             NEXT
           </button>
+          { requestFailed ? (<Error error={error}/>) : null}
       </div>
     )
   }
@@ -58,8 +51,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch){
   return({
-    getPokemons: (offset) => dispatch(fetchPokemons(offset)),
-    updateOffset: (offset) => dispatch(updateOffset(offset)),
+    getNextPokemons: () => dispatch(fetchNextPokemons()),
+    getPrevPokemons: () => dispatch(fetchPrevPokemons()),
   })
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ShowPokemons)

@@ -16,6 +16,7 @@ const initialState = {
     offset: 0,
     isRequestRunning: false,
     requestFailed: false,
+    error: "",
 }
 
 
@@ -35,6 +36,8 @@ function pokemonStore (
     case REQUEST_FAILED:
       return { ...state,
         requestFailed: true,
+        isRequestRunning: false,
+        error: action.error,
       }
     case REQUEST_SUCCEEDED:
       return { ...state,
@@ -43,6 +46,7 @@ function pokemonStore (
     case RECIEVE_RESPONSE:
       return { ...state,
         response: action.response,
+        isRequestRunning: false,
       }
     case LIST_POKEMONS: 
       return { ...state,
