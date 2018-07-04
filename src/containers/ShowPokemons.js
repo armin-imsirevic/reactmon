@@ -2,28 +2,31 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
-  fetchNextPokemons,
-  fetchPrevPokemons,
+  fetchPokemons,
+  CURRENT,
+  NEXT,
+  PREV,
 } from '../actions/actions'
 import ListPokemons from '../components/ListPokemons'
 import Error from '../components/Error'
+import RequestStatus from '../components/RequestStatus';
 
 class ShowPokemons extends Component {
 
   componentDidMount() {
-    this.props.getPrevPokemons();
+    this.props.getPokemons(CURRENT);
   }
 
   prev = () => {
-    this.props.getPrevPokemons();
+    this.props.getPokemons(PREV);
   }
 
   next = () => {
-    this.props.getNextPokemons();
+    this.props.getPokemons(NEXT);
   }
 
   render() {
-    const { pokemons, requestFailed, error } = this.props.pokemonStore;
+    const { pokemons, requestFailed, error, isRequestRunning } = this.props.pokemonStore;
 
     return (
       <div>
@@ -35,6 +38,7 @@ class ShowPokemons extends Component {
           <button onClick={() => this.next()}>
             NEXT
           </button>
+          <RequestStatus isRequestRunning={isRequestRunning}/>
           { requestFailed ? (<Error error={error}/>) : null}
       </div>
     )
@@ -51,8 +55,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch){
   return({
-    getNextPokemons: () => dispatch(fetchNextPokemons()),
-    getPrevPokemons: () => dispatch(fetchPrevPokemons()),
+    getPokemons: (command) => dispatch(fetchPokemons(command)),
   })
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ShowPokemons)
